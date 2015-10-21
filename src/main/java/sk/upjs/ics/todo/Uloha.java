@@ -40,6 +40,4 @@ public class Uloha {
     public String toString() {
         return this.nazov + " (termín " + dateFormat.format(this.date) + ")";
     }
-    
-    
 }
