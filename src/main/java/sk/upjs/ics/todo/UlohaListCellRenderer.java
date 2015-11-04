@@ -13,14 +13,14 @@ public class UlohaListCellRenderer extends DefaultListCellRenderer {
     public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
         Component component = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
         Uloha uloha = (Uloha) value;
-        if(jeSplnena(uloha) && !(isSelected)) {
+        if(jeSplnena(uloha) && !isSelected) {
             component.setBackground(Color.GREEN);
         }
         return component;
     }
 
     private boolean jeSplnena(Uloha uloha) {
-        return true;
+        return uloha.isSplnena();
     }
     
 }
