@@ -5,16 +5,16 @@ import java.util.List;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-
 public class MySqlUlohaDao implements UlohaDao {
-    private JdbcTemplate jdbcTemplate;    
-    
+
+    private JdbcTemplate jdbcTemplate;
+
     public MySqlUlohaDao() {
         MysqlDataSource dataSource = new MysqlDataSource();
         dataSource.setUrl("jdbc:mysql://localhost/todo");
         dataSource.setUser("todo");
         dataSource.setPassword("todo");
-        
+
         jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
@@ -27,7 +27,7 @@ public class MySqlUlohaDao implements UlohaDao {
     @Override
     public List<Uloha> dajVsetky() {
         String sql = "SELECT * FROM uloha";
-        
+
         BeanPropertyRowMapper<Uloha> mapper = BeanPropertyRowMapper.newInstance(Uloha.class);
         return jdbcTemplate.query(sql, mapper);
     }
@@ -36,5 +36,16 @@ public class MySqlUlohaDao implements UlohaDao {
     public void odstranit(Uloha uloha) {
         String sql = "DELETE FROM Uloha WHERE id = ?";
         jdbcTemplate.update(sql, uloha.getId());
+    }
+
+    @Override
+    public void upravit(Uloha uloha) {
+        String sql = "UPDATE `todo`.`uloha`\n"
+                + "SET\n"
+                + "`nazov` = ?,\n"
+                + "`date` = ?,\n"
+                + "`splnena` = ?\n"
+                + "WHERE `id` = ?\n";
+        jdbcTemplate.update(sql, uloha.getNazov(), uloha.getDate(), uloha.isSplnena(), uloha.getId());
     }
 }

@@ -3,10 +3,11 @@ package sk.upjs.ics.todo;
 
 import java.util.Date;
 import java.util.List;
+import javax.swing.JOptionPane;
 
 public class MainForm extends javax.swing.JFrame {
     
-    private MySqlUlohaDao ulohaDao = new MySqlUlohaDao();
+    private UlohaDao ulohaDao = UlohaDaoFactory.INSTANCE.getUlohaDao();
 
     public MainForm() {
         initComponents();
@@ -28,6 +29,7 @@ public class MainForm extends javax.swing.JFrame {
         pridatButton = new javax.swing.JButton();
         terminDatePicker = new org.jdesktop.swingx.JXDatePicker();
         odstranitButton = new javax.swing.JButton();
+        hotovoButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -48,6 +50,13 @@ public class MainForm extends javax.swing.JFrame {
             }
         });
 
+        hotovoButton.setText("Hotovo!");
+        hotovoButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                hotovoButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -61,8 +70,10 @@ public class MainForm extends javax.swing.JFrame {
                         .addComponent(terminDatePicker, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(pridatButton, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(odstranitButton, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(odstranitButton, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(hotovoButton))
                     .addComponent(jScrollPane1))
                 .addContainerGap())
         );
@@ -74,7 +85,8 @@ public class MainForm extends javax.swing.JFrame {
                     .addComponent(ulohaTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(terminDatePicker, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(pridatButton)
-                    .addComponent(odstranitButton))
+                    .addComponent(odstranitButton)
+                    .addComponent(hotovoButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 244, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -85,8 +97,23 @@ public class MainForm extends javax.swing.JFrame {
 
     private void pridatButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pridatButtonActionPerformed
         Uloha uloha = new Uloha();
-        uloha.setNazov(ulohaTextField.getText());
-        uloha.setDate(terminDatePicker.getDate());
+        
+        String nazov = ulohaTextField.getText();
+        if(nazov.trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Názov je povinný.");
+            return;
+        }        
+        uloha.setNazov(nazov);
+        
+        Date date = terminDatePicker.getDate();
+        if(date == null) {
+            date = new Date();
+        }
+        if(date.before(new Date())) {
+            JOptionPane.showMessageDialog(this, "Dátum nesmie byť z minulosti.");
+        }
+        uloha.setDate(date);
+        uloha.setSplnena(false);
         
         ulohaDao.pridat(uloha);
         
@@ -99,6 +126,14 @@ public class MainForm extends javax.swing.JFrame {
         
         refresh();
     }//GEN-LAST:event_odstranitButtonActionPerformed
+
+    private void hotovoButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hotovoButtonActionPerformed
+        Uloha uloha = (Uloha) ulohyList.getSelectedValue();
+        uloha.setSplnena(true);
+        ulohaDao.upravit(uloha);
+        
+        refresh();
+    }//GEN-LAST:event_hotovoButtonActionPerformed
 
 
     public static void main(String args[]) {
@@ -134,6 +169,7 @@ public class MainForm extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton hotovoButton;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JButton odstranitButton;
     private javax.swing.JButton pridatButton;
