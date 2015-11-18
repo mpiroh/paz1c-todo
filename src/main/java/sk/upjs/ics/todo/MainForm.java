@@ -1,6 +1,5 @@
 package sk.upjs.ics.todo;
 
-
 import java.util.Date;
 import java.util.List;
 import javax.swing.JOptionPane;
@@ -34,7 +33,18 @@ public class MainForm extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         ulohyList.setCellRenderer(new UlohaListCellRenderer());
+        ulohyList.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                ulohyListMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(ulohyList);
+
+        ulohaTextField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ulohaTextFieldActionPerformed(evt);
+            }
+        });
 
         pridatButton.setText("Pridať");
         pridatButton.addActionListener(new java.awt.event.ActionListener() {
@@ -134,6 +144,21 @@ public class MainForm extends javax.swing.JFrame {
         
         refresh();
     }//GEN-LAST:event_hotovoButtonActionPerformed
+
+    private void ulohaTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ulohaTextFieldActionPerformed
+        //-----------------------------------------------------------------
+    }//GEN-LAST:event_ulohaTextFieldActionPerformed
+
+    private void ulohyListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ulohyListMouseClicked
+        if(evt.getClickCount() == 2) {
+            Uloha uloha = (Uloha) ulohyList.getSelectedValue();
+            
+            UlohaForm ulohaForm = new UlohaForm(this, true, uloha);
+            ulohaForm.setVisible(true);
+            
+            refresh();
+        }
+    }//GEN-LAST:event_ulohyListMouseClicked
 
 
     public static void main(String args[]) {
