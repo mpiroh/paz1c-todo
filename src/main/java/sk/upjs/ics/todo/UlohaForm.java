@@ -116,13 +116,15 @@ public class UlohaForm extends javax.swing.JDialog {
         }
         
         Date datum = terminDatePicker.getDate();
-        if (datum.before(new Date())) {
+        if (datum == null) {
+            datum = new Date();
+        } else if (datum.before(new Date())) {
             JOptionPane.showMessageDialog(this, "Dátum nesmie byť z minulosti.");
             return;
         }
         
-        uloha.setNazov(nazovTextField.getText());
-        uloha.setDate(terminDatePicker.getDate());
+        uloha.setNazov(nazov);
+        uloha.setDate(datum);
         uloha.setSplnena(splnenaCheckBox.isSelected());
         
         ulohaDao.upravit(uloha);
